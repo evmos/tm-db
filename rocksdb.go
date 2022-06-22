@@ -1,3 +1,4 @@
+//go:build rocksdb
 // +build rocksdb
 
 package db
@@ -174,6 +175,10 @@ func (db *RocksDB) Stats() map[string]string {
 		stats[key] = db.db.GetProperty(key)
 	}
 	return stats
+}
+
+func (db *RocksDB) ForceCompact(start, limit []byte) error {
+	return nil
 }
 
 // NewBatch implements DB.
