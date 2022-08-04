@@ -117,7 +117,7 @@ func (db *PebbleDB) Set(key []byte, value []byte) error {
 	if value == nil {
 		return errValueNil
 	}
-	err := db.db.Set(key, value, pebble.NoSync)
+	err := db.db.Set(key, value, pebble.Sync)
 	if err != nil {
 		return err
 	}
@@ -146,7 +146,7 @@ func (db *PebbleDB) Delete(key []byte) error {
 	if len(key) == 0 {
 		return errKeyEmpty
 	}
-	err := db.db.Delete(key, pebble.NoSync)
+	err := db.db.Delete(key, pebble.Sync)
 	if err != nil {
 		return err
 	}
@@ -290,7 +290,7 @@ func (b *pebbleDBBatch) Write() error {
 	if b.batch == nil {
 		return errBatchClosed
 	}
-	err := b.batch.Commit(pebble.NoSync)
+	err := b.batch.Commit(pebble.Sync)
 	if err != nil {
 		return err
 	}
