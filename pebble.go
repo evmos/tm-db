@@ -5,6 +5,7 @@ package db
 import (
 	"bytes"
 	"fmt"
+	"github.com/cockroachdb/pebble/bloom"
 	"path/filepath"
 	"runtime"
 
@@ -40,7 +41,11 @@ func NewPebbleDB(name string, dir string) (DB, error) {
 		//		MaxOpenFiles:                1024,
 		//		MemTableSize:                64 << 20,
 		//		MemTableStopWritesThreshold: 4,
+		Levels: []pebble.LevelOptions{
+			{TargetFileSize: 4 * 1024 * 1024, FilterPolicy: bloom.FilterPolicy(10)},
+		},
 	}
+
 	/*
 		for i := 0; i < len(opts.Levels); i++ {
 			l := &opts.Levels[i]
