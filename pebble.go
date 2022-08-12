@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"fmt"
 	"path/filepath"
+	"runtime"
 
 	"github.com/cockroachdb/pebble"
 )
@@ -35,7 +36,7 @@ func NewPebbleDB(name string, dir string) (DB, error) {
 		//		L0StopWritesThreshold:       1000,
 		//		LBaseMaxBytes:               64 << 20, // 64 MB
 		//		Levels:                      make([]pebble.LevelOptions, 7),
-		//		MaxConcurrentCompactions:    3,
+		MaxConcurrentCompactions: runtime.NumCPU(),
 		//		MaxOpenFiles:                1024,
 		//		MemTableSize:                64 << 20,
 		//		MemTableStopWritesThreshold: 4,
