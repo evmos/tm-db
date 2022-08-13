@@ -28,53 +28,9 @@ var _ DB = (*PebbleDB)(nil)
 
 func NewPebbleDB(name string, dir string) (DB, error) {
 	dbPath := filepath.Join(dir, name+".db")
-	//	cache := pebble.NewCache(1024 * 1024 * 32)
-	//	defer cache.Unref()
 	opts := &pebble.Options{
-		//		Cache:                       cache,
-		//		FormatMajorVersion:          pebble.FormatNewest,
-		//		L0CompactionThreshold:       2,
-		//		L0StopWritesThreshold:       1000,
-		//		LBaseMaxBytes:               64 << 20, // 64 MB
-		//		Levels:                      make([]pebble.LevelOptions, 7),
-		MaxConcurrentCompactions: runtime.NumCPU(),
-		//		MaxOpenFiles:                1024,
-		//		MemTableSize:                64 << 20,
-		//		MemTableStopWritesThreshold: 4,
-		Levels: []pebble.LevelOptions{
-			{TargetFileSize: 2 * 1024 * 1024, FilterPolicy: bloom.FilterPolicy(10)},
-			{TargetFileSize: 2 * 1024 * 1024, FilterPolicy: bloom.FilterPolicy(10)},
-			{TargetFileSize: 2 * 1024 * 1024, FilterPolicy: bloom.FilterPolicy(10)},
-			{TargetFileSize: 2 * 1024 * 1024, FilterPolicy: bloom.FilterPolicy(10)},
-			{TargetFileSize: 2 * 1024 * 1024, FilterPolicy: bloom.FilterPolicy(10)},
-			{TargetFileSize: 2 * 1024 * 1024, FilterPolicy: bloom.FilterPolicy(10)},
-			{TargetFileSize: 2 * 1024 * 1024, FilterPolicy: bloom.FilterPolicy(10)},
-		},
+		MaxConcurrentCompactions: 3, // 3 is best
 	}
-
-	/*
-		for i := 0; i < len(opts.Levels); i++ {
-			l := &opts.Levels[i]
-			l.BlockSize = 32 << 10       // 32 KB
-			l.IndexBlockSize = 256 << 10 // 256 KB
-			l.FilterPolicy = bloom.FilterPolicy(10)
-			l.FilterType = pebble.TableFilter
-			if i > 0 {
-				l.TargetFileSize = opts.Levels[i-1].TargetFileSize * 2
-			}
-			l.EnsureDefaults()
-		}
-	*/
-	//	opts.Levels[6].FilterPolicy = nil
-	//	opts.FlushSplitBytes = opts.Levels[0].TargetFileSize
-
-	//for i := 0; i < len(opts.Levels); i++ {
-	//	l := &opts.Levels[i]
-	//	l.Compression = pebble.NoCompression
-	//	l.EnsureDefaults()
-	//}
-	//
-	//opts.DisableAutomaticCompactions = true
 
 	opts.EnsureDefaults()
 
