@@ -5,10 +5,26 @@ package db
 import (
 	"bytes"
 	"fmt"
-	"path/filepath"
-
 	"github.com/cockroachdb/pebble"
+	"path/filepath"
+	"sync/atomic"
 )
+
+type count32 int32
+
+func (c *count32) inc() int32 {
+	return atomic.AddInt32((*int32)(c), 1)
+}
+
+func (c *count32) dec() int32 {
+	return atomic.AddInt32((*int32)(c), -1)
+}
+
+func (c *count32) get() int32 {
+	return atomic.LoadInt32((*int32)(c))
+}
+
+var c count32
 
 func init() {
 	dbCreator := func(name string, dir string) (DB, error) {
@@ -312,6 +328,10 @@ func newPebbleDBIterator(source *pebble.Iterator, start, end []byte, isReverse b
 			source.First()
 		}
 	}
+
+	c.inc()
+	fmt.Printf("Iterator counter: %d \n", c.get())
+
 	return &pebbleDBIterator{
 		source:    source,
 		start:     start,
@@ -405,6 +425,9 @@ func (itr *pebbleDBIterator) Error() error {
 func (itr *pebbleDBIterator) Close() error {
 	//fmt.Println("pebbleDBIterator.Close")
 	err := itr.source.Close()
+
+	c.dec()
+
 	if err != nil {
 		return err
 	}
