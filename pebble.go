@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/cockroachdb/pebble"
 	"path/filepath"
+	"runtime"
 	"sync/atomic"
 )
 
@@ -330,7 +331,11 @@ func newPebbleDBIterator(source *pebble.Iterator, start, end []byte, isReverse b
 	}
 
 	c.inc()
+	fmt.Printf("-------------------------------------------------------------\n")
 	fmt.Printf("Iterator counter: %d \n", c.get())
+	buf := make([]byte, 1<<16)
+	runtime.Stack(buf, true)
+	fmt.Printf("%s", buf)
 
 	return &pebbleDBIterator{
 		source:    source,
