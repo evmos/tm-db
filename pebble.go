@@ -337,7 +337,7 @@ func newPebbleDBIterator(source *pebble.Iterator, start, end []byte, isReverse b
 	fmt.Printf("-------------------------------------------------------------\n")
 	fmt.Printf("open iterator id=%d, Iterator counter: %d \n", id_itr.get(), c.get())
 	//buf := make([]byte, 1<<16)
-	buf := make([]byte, 4096)
+	buf := make([]byte, 10000)
 	runtime.Stack(buf, true)
 	fmt.Printf("#%d: %s", id_itr.get(), buf)
 
