@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/cockroachdb/pebble"
 	"path/filepath"
+	"runtime"
 	"sync/atomic"
 )
 
@@ -24,7 +25,8 @@ func (c *count32) get() int32 {
 	return atomic.LoadInt32((*int32)(c))
 }
 
-var c count32
+var c count32      // count opening iterators
+var id_itr count32 // to assign an id for every new iterator
 
 func init() {
 	dbCreator := func(name string, dir string) (DB, error) {
@@ -314,6 +316,7 @@ type pebbleDBIterator struct {
 	start, end []byte
 	isReverse  bool
 	isInvalid  bool
+	id         int32
 }
 
 var _ Iterator = (*pebbleDBIterator)(nil)
@@ -329,12 +332,14 @@ func newPebbleDBIterator(source *pebble.Iterator, start, end []byte, isReverse b
 		}
 	}
 
+	id_itr.inc()
 	c.inc()
 	fmt.Printf("-------------------------------------------------------------\n")
-	fmt.Printf("Iterator counter: %d \n", c.get())
+	fmt.Printf("open iterator id=%d, Iterator counter: %d \n", id_itr.get(), c.get())
 	//buf := make([]byte, 1<<16)
-	//runtime.Stack(buf, true)
-	//fmt.Printf("%s", buf)
+	buf := make([]byte, 2048)
+	runtime.Stack(buf, true)
+	fmt.Printf("#%d: %s", id_itr.get(), buf)
 
 	return &pebbleDBIterator{
 		source:    source,
@@ -431,6 +436,7 @@ func (itr *pebbleDBIterator) Close() error {
 	err := itr.source.Close()
 
 	c.dec()
+	fmt.Printf("close iterator id=%d\n", itr.id)
 
 	if err != nil {
 		return err
