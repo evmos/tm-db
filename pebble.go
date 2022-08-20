@@ -439,7 +439,8 @@ func (itr *pebbleDBIterator) Close() error {
 	err := itr.source.Close()
 
 	c.dec()
-	fmt.Printf("close iterator id=%d\n", itr.id)
+	fmt.Printf("-------------------------------------------------------------\n")
+	fmt.Printf("\nclose iterator id=%d\n", itr.id)
 
 	if err != nil {
 		return err
