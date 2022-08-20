@@ -341,13 +341,16 @@ func newPebbleDBIterator(source *pebble.Iterator, start, end []byte, isReverse b
 	runtime.Stack(buf, true)
 	fmt.Printf("#%d: %s", id_itr.get(), buf)
 
-	return &pebbleDBIterator{
+	newitr := &pebbleDBIterator{
 		source:    source,
 		start:     start,
 		end:       end,
 		isReverse: isReverse,
 		isInvalid: false,
+		id:        id_itr.get(),
 	}
+
+	return newitr
 }
 
 // Domain implements Iterator.
