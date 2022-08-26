@@ -5,8 +5,6 @@ package db
 import (
 	"bytes"
 	"fmt"
-	"github.com/syndtr/goleveldb/leveldb"
-	"github.com/syndtr/goleveldb/leveldb/opt"
 	"path/filepath"
 
 	"github.com/cockroachdb/pebble"
