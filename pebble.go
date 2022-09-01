@@ -374,6 +374,9 @@ func newPebbleDBIterator(source *pebble.Iterator, start, end []byte, isReverse b
 			source.First()
 		}
 	}
+
+	metricUncloseItr.Add(1)
+
 	return &pebbleDBIterator{
 		source:    source,
 		start:     start,
@@ -466,6 +469,9 @@ func (itr *pebbleDBIterator) Error() error {
 // Close implements Iterator.
 func (itr *pebbleDBIterator) Close() error {
 	//fmt.Println("pebbleDBIterator.Close")
+
+	metricUncloseItr.Add(-1)
+
 	err := itr.source.Close()
 	if err != nil {
 		return err
