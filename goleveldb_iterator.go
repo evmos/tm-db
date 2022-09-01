@@ -38,6 +38,9 @@ func newGoLevelDBIterator(source iterator.Iterator, start, end []byte, isReverse
 			source.Seek(start)
 		}
 	}
+
+	metricUncloseItr.Add(1)
+
 	return &goLevelDBIterator{
 		source:    source,
 		start:     start,
@@ -125,6 +128,8 @@ func (itr *goLevelDBIterator) Error() error {
 
 // Close implements Iterator.
 func (itr *goLevelDBIterator) Close() error {
+	metricUncloseItr.Add(-1)
+
 	itr.source.Release()
 	return nil
 }
